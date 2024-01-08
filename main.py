@@ -4,8 +4,6 @@ import asyncio
 import random
 import requests
 from threading import Thread
-from keep_alive import keep_alive
-keep_alive()
 
 intents = discord.Intents.all()
 prefixes = ["r!", "R!"]
