@@ -1,12 +1,18 @@
 from flask import Flask, render_template
-import os
+from threading import Thread
 
 app = Flask(__name__)
 
 @app.route('/')
-def home():
-  return "RFBOT COMMANDS IS WORKING"
+def index():
+    return "Alive"
 
-if __name__=="__main__":
-  os.system("python main.py &")
-  app.run(host="0.0.0.0", port=80)
+def run():
+    app.run(host='0.0.0.0', port=8080)
+
+def keep_alive():
+    t = Thread(target=run)
+    t.start()
+
+if __name__ == "__main__":
+    keep_alive()
