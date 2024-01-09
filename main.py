@@ -3,10 +3,8 @@ from discord.ext import commands, tasks
 import asyncio
 import random
 import requests
-import os
 from keep_alive import keep_alive
 keep_alive()
-
 
 intents = discord.Intents.all()
 prefixes = ["r!", "R!"]
@@ -159,17 +157,17 @@ async def unmute_error(ctx, error):
 @commands.has_role('Moderator')
 async def give_role(ctx, member: discord.Member, role: discord.Role):
     if role.permissions.administrator:
-        await ctx.send("You cannot assign roles with administrator permissions.")
+        await ctx.send("**You cannot assign roles with administrator permissions.**")
     else:
         await member.add_roles(role)
-        await ctx.send(f"Role '{role.name}' has been given to {member.mention}")
+        await ctx.send(f"**Role** `{role.name}` **has been given to** {member.mention}")
 
 @give_role.error
 async def give_role_error(ctx, error):
     if isinstance(error, commands.MissingRole):
-        await ctx.send("You don't have the 'moderator' role to use this command.")
+        await ctx.send("**You don't have the** `moderator` **role to use this command.**")
     elif isinstance(error, commands.MissingRequiredArgument):
-        await ctx.send("Usage: `R!role <member> <role>`")
+        await ctx.send("**Usage:** `R!role <member> <role>`")
 
 @bot.command()
 async def bot_help(ctx):
@@ -180,7 +178,7 @@ async def bot_help(ctx):
 
     # Add command details
     embed.add_field(name='Command 1: Mute',
-                    value='```r!mute @user duration```  Mutes the mentioned user for a specified duration (e.g., 3m)',
+                    value='```r!mute @user <duration>```  Mutes the mentioned user for a specified duration (e.g., 3m)',
                     inline=False)
 
     embed.add_field(name='Command 2: Verify Username Change',
