@@ -523,6 +523,12 @@ async def spoiler(ctx, *, message):
 
     spoiler_message = '||' + '||'.join([f'{char}||' for char in message])  # Spoil every character individually
     await ctx.send(spoiler_message)
+
+@bot.command(name='updown')
+async def updown(ctx, word: str):
+    result = ''.join(c.lower() if i % 2 == 0 else c.upper() for i, c in enumerate(word))
+    await ctx.send(result)
+
   
 import os
 
