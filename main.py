@@ -520,15 +520,18 @@ async def send_error_embed(ctx, error_message):
 
 @bot.command()
 async def spoiler(ctx, *, message):
-
     spoiler_message = '||' + '||'.join([f'{char}||' for char in message])  # Spoil every character individually
-    await ctx.send(spoiler_message)
+
+    response_message = f'**Here is the spoiler text:** {spoiler_message}'
+    await ctx.send(response_message)
 
 @bot.command(name='updown')
 async def updown(ctx, word: str):
     result = ''.join(c.lower() if i % 2 == 0 else c.upper() for i, c in enumerate(word))
-    await ctx.send(result)
 
+    response_message = f'**Here is the updown text:** {result}'
+    await ctx.send(response_message)
+  
   
 import os
 
