@@ -493,9 +493,14 @@ def format_winners(winners):
 
 @bot.command(name='reset_event')
 async def reset_event(ctx):
-    global processing_event
-    processing_event = False
-    await ctx.send('**Event reset. You can now start a new event.** <a:sucess:1175024579698233405>')
+    allowed_user_id = 563033118567563267
+
+    if ctx.author.id == allowed_user_id:
+        global processing_event
+        processing_event = False
+        await ctx.send('**Event reset. You can now start a new event.** <a:sucess:1175024579698233405>')
+    else:
+        await ctx.send('**Sorry, you do not have permission to use this command.**')
 
 @bot.command(name='kick')
 @has_permissions(kick_members=True)
