@@ -377,9 +377,6 @@ async def yesnowheel(ctx):
     elif "yes" in message.content.lower():
         await message.edit(content="<:Wheel_Yes:1186737503479279687>")
 
-event_winner = None  # Store the winner information
-processing_event = False  # Flag to check if an event is already in progress
-
 @bot.command(name='event')
 async def event(ctx, duration, channel_mention):
     global processing_event, event_winner
@@ -421,6 +418,9 @@ async def event(ctx, duration, channel_mention):
 
     if channel is None:
         return await ctx.send('Invalid channel ID. <a:alert2:1190683481374720010>')
+
+    # Set the role permissions to allow sending messages on the given channel for everyone
+    await channel.set_permissions(ctx.guild.default_role, send_messages=True)
 
     # Stop the task if it's already running
     if process_channel_messages.is_running():
@@ -467,12 +467,35 @@ async def process_channel_messages(ctx, channel):
         # Reset the flag to indicate that the event has finished
         processing_event = False
 
-        # Send the results to the original command channel
-        await ctx.send('**Event timer ended. Winners:**\n'
-                       f'<:1_:1191665595075280906> {event_winner[0][0]} **with** `{event_winner[0][1]}` **messages.** <:Winner:1191699565850656820>\n'
-                       f'<:2_:1191665584836976711> {event_winner[1][0]} **with** `{event_winner[1][1]}` **messages.**\n'
-                       f'<:3_:1191665609604341780> {event_winner[2][0]} **with** `{event_winner[2][1]}` **messages.**\n'
-                       '<a:811944902610518046:1190683894769528842>')
+        # Set the role permissions to deny sending messages on the given channel for everyone
+        await channel.set_permissions(ctx.guild.default_role, send_messages=False)
+
+        # Display winners dynamically based on the number of participants
+        await ctx.send('**Event timer ended. Winners:**\n' + format_winners(event_winner))
+
+    else:
+        # Reset the flag to indicate that the event has finished
+        processing_event = False
+        await ctx.send('**Event timer ended. No winners.** <a:alert2:1190683481374720010>')
+
+def format_winners(winners):
+    if len(winners) == 1:
+        return f'<:1_:1191665595075280906> {winners[0][0]} **with** `{winners[0][1]}` **messages.** <:Winner:1191699565850656820>'
+    elif len(winners) == 2:
+        return (f'<:1_:1191665595075280906> {winners[0][0]} **with** `{winners[0][1]}` **messages.** <:Winner:1191699565850656820>\n'
+                f'<:2_:1191665584836976711> {winners[1][0]} **with** `{winners[1][1]}` **messages.**')
+    elif len(winners) == 3:
+        return (f'<:1_:1191665595075280906> {winners[0][0]} **with** `{winners[0][1]}` **messages.** <:Winner:1191699565850656820>\n'
+                f'<:2_:1191665584836976711> {winners[1][0]} **with** `{winners[1][1]}` **messages.**\n'
+                f'<:3_:1191665609604341780> {winners[2][0]} **with** `{winners[2][1]}` **messages.**')
+
+# Rest of the code remains unchanged...
+
+@bot.command(name='reset_event')
+async def reset_event(ctx):
+    global processing_event
+    processing_event = False
+    await ctx.send('**Event reset. You can now start a new event.** <a:sucess:1175024579698233405>')
 
 @bot.command(name='kick')
 @has_permissions(kick_members=True)
