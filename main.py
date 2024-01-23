@@ -217,7 +217,7 @@ value='```r!invite``` Get the bot invite link.',
     embed.add_field(name='Command 8: clear messages',
                     
 value='```r!clear <number>```',
-                    inline=False) 
+                    inline=False)
     # Send the embed
     await ctx.send(embed=embed)
 
@@ -560,6 +560,17 @@ async def updown(ctx, word: str):
     response_message = f'**Here is the updown text:** {result}'
     await ctx.send(response_message)
   
+@bot.command(name='emojiID')
+async def emoji_id(ctx, emoji_name):
+    guild = ctx.guild
+    emojis = [f"{emoji} **:** `{emoji.id}`" for emoji in guild.emojis if emoji_name.lower() in emoji.name.lower()]
+
+    if emojis:
+        response = '\n'.join(emojis)
+    else:
+        response = f"**No emoji found containing:** `{emoji_name}` *Maybe bot is not in the server of the emoji you provided.*"
+
+    await ctx.send(response)
   
 import os
 
