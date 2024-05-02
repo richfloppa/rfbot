@@ -3,8 +3,7 @@ from discord.ext import commands, tasks
 import asyncio
 import random
 import requests
-from keep_alive import keep_alive
-keep_alive()
+import os
 
 intents = discord.Intents.all()
 prefixes = ["r!", "R!"]
@@ -13,7 +12,7 @@ storage_directory = 'user_warnings'
 
 bot = commands.Bot(command_prefix=prefixes, intents=intents)
 
-activity_options = ["discord.gg/rfserver", "JOIN NOW", "PREFIX: R!", "R!bot_help"]
+activity_options = ["what the hamze doin", "AI services are disabled.", "R!bot_help"]
 activity_index = 0
 
 @bot.event
@@ -37,7 +36,7 @@ async def clear(ctx, amount: int, member: discord.Member = None):
 
     deleted_messages = await ctx.channel.purge(limit=amount + 1, check=is_target)
     await ctx.send(f'{len(deleted_messages) - 1} messages cleared from {member.display_name if member else "everyone"}.')
-  
+
 from discord.ext.commands import has_permissions
 
 @bot.command()
@@ -136,7 +135,7 @@ async def mute(ctx, member: discord.Member, duration: str):
 async def mute_error(ctx, error):
     if isinstance(error, commands.MissingRequiredArgument):
         await ctx.send("**Unexpected error, please use the command as:** `R!mute @mention <duration>`")
-      
+
 @bot.command()
 async def unmute(ctx, member: discord.Member):
     # Mute rolünü tanımlayın (örnek olarak "Muted")
@@ -151,7 +150,7 @@ async def unmute(ctx, member: discord.Member):
 @unmute.error
 async def unmute_error(ctx, error):
     if isinstance(error, commands.MissingRequiredArgument):
-        await ctx.send("**Unexpected error please use command as: R!mute @mention**")
+        await ctx.send("**Unexpected error please use command as: R!unmute @mention**")
 
 @bot.command(name='role')
 @commands.has_role('Moderator')
@@ -197,37 +196,38 @@ async def bot_help(ctx):
                     value='```r!role @user <role>```  Gives the specified role to the mentioned user (moderator role required)',
                     inline=False)
     embed.add_field(name='Command 7: Yes No Wheel',
-                    
+
 value='```r!yesnowheel``` - Spins a yes no wheel.',
                     inline=False)
     embed.add_field(name='Command 6: Spam',                   value='```r!spam @user {message} {number}``` Sends the specified number of spam messages to the mentioned user with a custom message',
                     inline=False)
     embed.add_field(name='Command 7: Chat Filter Permission',
-                    
+
 value='```r!nochatfilter @user``` Give a user no chat filter permission. (10 MINUTES ONLY)',
                     inline=False)
     embed.add_field(name='Command 8: Set nick',
-                    
+
 value='```r!setnick @user <new name>``` Set a new nickname for provided user.',
                     inline=False) 
     embed.add_field(name='Command 8: invite',
-                    
+
 value='```r!invite``` Get the bot invite link.',
                     inline=False) 
     embed.add_field(name='Command 8: clear messages',
-                    
+
 value='```r!clear <number>```',
                     inline=False)
     # Send the embed
     await ctx.send(embed=embed)
 
-AUTHORIZED_USER_ID = 563033118567563267  # Replace with the authorized user's ID
+# Define your authorized user IDs
+AUTHORIZED_USER_IDS = [1235219802596048977, 563033118567563267, 1057936158992113754, 787226889369550859, 1116739769070788780, 743210144741195903, 1097679086719074416] # Replace with the authorized user's
 
 @bot.command(name='spam')
 async def spam(ctx, user: discord.User, *, args: str):
-    # Check if the command is used by the authorized user
-    if ctx.author.id != AUTHORIZED_USER_ID:
-        await ctx.send("This command is only available to the Bot owner. ❌")
+    # Check if the command is used by an authorized user
+    if ctx.author.id not in AUTHORIZED_USER_IDS:
+        await ctx.send("This command is only available to authorized users. ❌")
         return
 
     # Split the arguments into message and number
@@ -239,8 +239,8 @@ async def spam(ctx, user: discord.User, *, args: str):
         return
 
     # Check if the number is within a reasonable range
-    if not (1 <= number <= 1000):  # Adjust the range as needed
-        await ctx.send("Please provide a valid number between 1 and 1000.", embed=discord.Embed(color=discord.Color.red()))
+    if not (1 <= number <= 10000 ):  # Adjust the range as needed
+        await ctx.send("Please provide a valid number between 1 and 10000.", embed=discord.Embed(color=discord.Color.red()))
         return
 
     # Get the custom emoji ID
@@ -312,7 +312,7 @@ async def set_nickname(ctx, member: discord.Member = None, *, new_nickname=None)
         embed = discord.Embed(
             title='Permission Denied',
             description='You do not have the required permissions to set someone else\'s nickname.',
-     
+
           color=discord.Color.red()
         )
         await ctx.send(embed=embed)
@@ -550,16 +550,16 @@ async def send_error_embed(ctx, error_message):
 async def spoiler(ctx, *, message):
     spoiler_message = '||' + '||'.join([f'{char}||' for char in message])  # Spoil every character individually
 
-    response_message = f'**Here is the spoiler text:** {spoiler_message}'
+    response_message = f'{ctx.author.mention}, **Here is the spoiler text:** {spoiler_message}'
     await ctx.send(response_message)
 
 @bot.command(name='updown')
-async def updown(ctx, word: str):
-    result = ''.join(c.lower() if i % 2 == 0 else c.upper() for i, c in enumerate(word))
+async def updown(ctx, *, phrase: str):  # Use '*' to accept multi-word input
+    result = ''.join(c.lower() if i % 2 == 0 else c.upper() for i, c in enumerate(phrase))
 
-    response_message = f'**Here is the updown text:** {result}'
-    await ctx.send(response_message)
-  
+    response_message = f'**{ctx.author.mention}, here is the updown text:** {result}'
+    await ctx.send(response_message.replace(" ", " "))
+
 @bot.command(name='emojiID')
 async def emoji_id(ctx, emoji_name):
     guild = ctx.guild
@@ -571,8 +571,6 @@ async def emoji_id(ctx, emoji_name):
         response = f"**No emoji found containing:** `{emoji_name}` *Maybe bot is not in the server of the emoji you provided.*"
 
     await ctx.send(response)
-  
-import os
 
 @bot.event
 async def on_disconnect():
@@ -583,7 +581,7 @@ async def on_error(event, *args, **kwargs):
     print(f"Error in {event}: {args[0]}")
     if isinstance(args[0], discord.ConnectionClosed):
         print("Reconnecting...")
-        await asyncio.sleep(5)  # Add a delay before attempting to reconnect
+        await asyncio.sleep(0.1)  # Add a delay before attempting to reconnect
         await bot.login(token, bot=True)
         await bot.connect()
 
