@@ -379,6 +379,23 @@ async def yesnowheel(ctx):
     elif "yes" in message.content.lower():
         await message.edit(content="<:Wheel_Yes:1186737503479279687>")
 
+@bot.command(name='yourmom', help='Get a "your mom" joke')
+async def yourmom(ctx):
+    try:
+        api_url = 'https://www.yomama-jokes.com/api/v1/jokes/random/'
+        response = requests.get(api_url)
+
+        if response.status_code == 200:
+            joke = response.json().get('joke')
+            if joke:
+                await ctx.send(joke)
+            else:
+                await ctx.send('Error: Unable to fetch a "your mom" joke.')
+        else:
+            await ctx.send('Error: Unable to fetch a "your mom" joke.')
+    except requests.RequestException:
+        await ctx.send('Error: Unable to fetch a "your mom" joke')
+
 @bot.command(name='event')
 async def event(ctx, duration, channel_mention):
     global processing_event, event_winner
