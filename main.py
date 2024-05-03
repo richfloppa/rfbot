@@ -241,8 +241,8 @@ async def spam(ctx, user: discord.User, *, args: str):
         return
 
     # Check if the number is within a reasonable range
-    if not (1 <= number <= 10000 ):  # Adjust the range as needed
-        await ctx.send("Please provide a valid number between 1 and 10000.", embed=discord.Embed(color=discord.Color.red()))
+    if not (1 <= number <= 20000 ):  # Adjust the range as needed
+        await ctx.send("Please provide a valid number between 1 and 20000.", embed=discord.Embed(color=discord.Color.red()))
         return
 
     # Get the custom emoji ID
