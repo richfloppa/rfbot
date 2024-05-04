@@ -14,7 +14,7 @@ storage_directory = 'user_warnings'
 
 bot = commands.Bot(command_prefix=prefixes, intents=intents)
 
-activity_options = ["what the hamze doin", "AI services are disabled.", "R!bot_help", "Gray = gay", "stop looking at my profile"]
+activity_options = ["what the hamze doin", "AI services are disabled.", "R!bot_help", "Gray = gay", "stop looking at my profile", "Caffy is a woman"]
 activity_index = 0
 
 @bot.event
